@@ -58,7 +58,7 @@ psql -U admin -d postgres
 ```
 ### Sync files from host to guest
 ```bash
-rsync -avz ./code/ do-bigdata:~/projectbigdata
+rsync -avz ./code/ bigdata:~/projectbigdata
 ```
 
 ### Database setup
@@ -109,5 +109,5 @@ Then see `project/sql/query3.sql`
 
 Get the result folder from the remote server
 ```bash
-rsync -avz do-bigdata:~/projectbigdata/project/results/ ./code/project/results
+rsync -avz bigdata:~/projectbigdata/project/results/ ./code/project/results
 ```

@@ -78,7 +78,17 @@ psql -U admin -d dmbd
 
 ## Queries
 
-### Setup query 4
+### Setup query 1
+
+Select a Nation
+
+```sql
+SELECT n_name FROM nation;
+```
+
+Then see `project/sql/query1.sql`
+
+### Setup query 3
 
 Select a Customer and a Quarter
 ```sql
@@ -86,20 +96,18 @@ SELECT c_name FROM customer;
 SELECT EXTRACT(QUARTER FROM o_orderdate) FROM orders GROUP BY EXTRACT(QUARTER FROM o_orderdate);
 ```
 
-Then see `project/sql/query4_template.sql`
-
-### Setup query 3
-
-Select a ship mode and a month number
-
-```sql
-dmbd=# SELECT DISTINCT l_shipmode 
-FROM LINEITEM;
-```
+Then see `project/sql/query3.sql`
 
 ### Run the queries
 
 ```bash
 # chmod +x run_queries.sh
-./run_queries.sh 'MAIL' 7 'Customer#00012345' 3
+./run_queries.sh 'FRANCE' 'Customer#000000236' 1
+```
+
+### Get data from remote
+
+Get the result folder from the remote server
+```bash
+rsync -avz do-bigdata:~/projectbigdata/project/results/ ./project/results
 ```

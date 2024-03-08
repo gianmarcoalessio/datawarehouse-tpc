@@ -1,9 +1,9 @@
 #!/bin/bash 
 
+source utils.sh
+
 tpch_version="3.0.1"
 size=10
-db_name="dmbd"
-db_user="admin"
 
 cd "./TPC-H_V${tpch_version}/dbgen"
 make clean

@@ -17,3 +17,23 @@ psql -U $db_user -d $db_name -f project/sql/query1.sql -v nation="$nation" > pro
 
 # Query 3 Execution with Output
 psql -U $db_user -d $db_name -f project/sql/query3.sql -v customer="$customer" -v quarter="$quarter" > project/results/query3_$timestamp.txt
+
+# INDEXES
+
+# Add indexes for Query 1
+execute_query_file "project/sql/query1_add_indexes.sql"
+
+# Query 1 Execution with Output
+psql -U $db_user -d $db_name -f project/sql/query1.sql -v nation="$nation" > project/results/query1_indexed_$timestamp.txt
+
+# Remove indexes for Query 1
+execute_query_file "project/sql/query1_drop_indexes.sql"
+
+# Add indexes for Query 3
+execute_query_file "project/sql/query3_add_indexes.sql"
+
+# Query 3 Execution with Output
+psql -U $db_user -d $db_name -f project/sql/query3.sql -v customer="$customer" -v quarter="$quarter" > project/results/query3_indexed_$timestamp.txt
+
+# Remove indexes for Query 3
+execute_query_file "project/sql/query3_drop_indexes.sql"

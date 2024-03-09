@@ -110,4 +110,5 @@ Then see `project/sql/query3.sql`
 Get the result folder from the remote server
 ```bash
 rsync -avz bigdata:~/projectbigdata/project/results/ ./code/project/results
+rsync -avz bigdata:~/projectbigdata/sqltest ./sqltest
 ```

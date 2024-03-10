@@ -3,37 +3,41 @@
 source utils.sh
 
 # Redirect all output to a file with timestamp in the name
-exec > "project/results/stats_${timestamp}.txt" 2>&1
+exec > "./results/stats_${timestamp}.txt" 2>&1
 
-# Specify relevant tables and columns for Query 1 and 3
-TABLES=("lineitem" "orders" "customer" "supplier" "nation" "region") 
-COLUMNS=("l_orderkey" "l_suppkey" "o_orderdate" "l_extendedprice" "l_discount" "s_nationkey" "c_nationkey" "n_regionkey" "r_regionkey" "l_returnflag" "c_name" "c_custkey") 
+# Function to gather data statistics
+gather_statistics() {
+    table=$1  # Pass table name as an argument
 
+    echo "*** Statistics for Table: ${table} ***"
 
-# Get table sizes
-echo "*** Table Sizes ***"
-execute_query "SELECT relname AS table_name, n_live_tup AS estimated_row_count FROM pg_stat_user_tables;"
+    # Number of rows
+    row_count=$(execute_query "SELECT COUNT(*) FROM ${table};")
+    echo "Number of rows: ${row_count}"
 
-# Get distinct value counts
-echo "*** Distinct Value Counts ***"
-for table in "${TABLES[@]}"; do
-    for column in "${COLUMNS[@]}"; do
-        execute_query "SELECT '$table' as table_name, '$column' as column_name, n_distinct FROM pg_stats WHERE tablename = '$table' AND attname = '$column';"
+    # Table size
+    table_size=$(execute_query "SELECT pg_size_pretty(pg_total_relation_size('${table}'));")
+    echo "Table size: ${table_size}"
+
+    # Distinct values, minimum, and maximum for each query column
+    for column in "${COLUMNS[@]}"; do 
+        distinct_count=$(execute_query "SELECT COUNT(DISTINCT ${column}) FROM ${table};")
+        min_value=$(execute_query "SELECT MIN(${column}) FROM ${table};")
+        max_value=$(execute_query "SELECT MAX(${column}) FROM ${table};")
+
+        echo "Column: ${column}"
+        echo "  Distinct Values: ${distinct_count}"
+        echo "  Minimum: ${min_value}"
+        echo "  Maximum: ${max_value}"
     done
-done
+    echo ""
+}
 
-# Get Min/Max (adjust as needed)
-echo "*** Minimum and Maximum Values ***"
-for table in "${TABLES[@]}"; do
-    for column in "${COLUMNS[@]}"; do
-        execute_query "SELECT '$table' as table_name, '$column' as column_name, min($table.$column), max($table.$column) FROM $table;"
-    done
-done
+# Specify the relevant tables 
+TABLES=("lineitem" "orders" "part" "supplier" "nation" "region" "customer")
+COLUMNS=("l_orderkey" "l_partkey" "l_suppkey" "p_type" "n_name" "o_orderdate") 
 
-# All the tables this time
-TABLES=("lineitem" "orders" "customer" "supplier" "nation" "region" "part" "partsupp")
-# Get table sizes in a human-readable format
-echo "*** Table Sizes (Human-Readable) ***"
+# Gather statistics
 for table in "${TABLES[@]}"; do
-    execute_query "SELECT '$table' as table_name, pg_size_pretty(pg_relation_size('$table')) as table_size_pretty FROM $table;"
+    gather_statistics "$table"
 done

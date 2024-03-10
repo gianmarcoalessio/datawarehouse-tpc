@@ -12,7 +12,7 @@ printf "\nGenerating using dbgen with size: $size"
 ./dbgen -v -s $size
 sed -i 's/|$//' nation.tbl region.tbl supplier.tbl customer.tbl part.tbl partsupp.tbl orders.tbl lineitem.tbl
 
-cd ../../project/sql
+cd ../../sql
 
 printf "\n\nCreating the db\n"
 createdb -h localhost -U $db_user $db_name -p 5432

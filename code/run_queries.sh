@@ -2,38 +2,40 @@
 
 source utils.sh
 
-# Parameters for Query 1
-nation=$1
-
-# Parameters for Query 3
-customer=$2
-quarter=$3
-
 # CLEAN
 
 # Query 1 Execution with Output
-#psql -U $db_user -d $db_name -f ./sql/query1.sql -v nation="$nation" > ./results/query1_$timestamp.txt
+execute_query_file "./sql/query1a.sql" > ./results/query1a_$timestamp.txt
 # to be repeated 3 times, with different parameters?
 
 # Query 3 Execution with Output
-psql -U $db_user -d $db_name -f ./sql/query3.sql -v customer="$customer" -v quarter="$quarter" > ./results/query3_$timestamp.txt
+execute_query_file "./sql/query3a.sql" > ./results/query3a_$timestamp.txt
 
 # INDEXES
 
 # # Add indexes for Query 1
-# execute_query_file "./sql/query1_add_indexes.sql"
+execute_query_file "./sql/query1_add_indexes.sql"
 
 # # Query 1 Execution with Output
-# psql -U $db_user -d $db_name -f ./sql/query1.sql -v nation="$nation" > ./results/query1_indexed_$timestamp.txt
+execute_query_file "./sql/query1a.sql" > ./results/query1a_indexed_$timestamp.txt
 
 # # Remove indexes for Query 1
-# execute_query_file "./sql/query1_drop_indexes.sql"
+execute_query_file "./sql/query1_drop_indexes.sql"
 
 # # Add indexes for Query 3
-# execute_query_file "./sql/query3_add_indexes.sql"
+execute_query_file "./sql/query3_add_indexes.sql"
 
 # # Query 3 Execution with Output
-# psql -U $db_user -d $db_name -f ./sql/query3.sql -v customer="$customer" -v quarter="$quarter" > ./results/query3_indexed_$timestamp.txt
+execute_query_file "./sql/query3a.sql" > ./results/query3a_indexed_$timestamp.txt
 
 # # Remove indexes for Query 3
 # execute_query_file "./sql/query3_drop_indexes.sql"
+
+# Query 1 Create materialized view
+execute_query_file "./sql/query1a_create_mv.sql"
+
+# Query 1 on materialized view
+execute_query "SELECT * FROM mv_query1 WHERE exporting_nation_name = 'FRANCE';" > ./results/query1a_mv_$timestamp.txt
+
+# Query 1 Drop materialized view
+execute_query "DROP MATERIALIZED VIEW mv_query1;"

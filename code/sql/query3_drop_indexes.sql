@@ -1,7 +1,4 @@
--- Remove indexes individually:
-DROP INDEX idx_orders_o_custkey;
-DROP INDEX idx_orders_o_orderdate;
-DROP INDEX idx_customer_c_custkey;
-DROP INDEX idx_customer_c_name;
-DROP INDEX idx_lineitem_l_orderkey;
-DROP INDEX idx_lineitem_l_returnflag; 
+-- For Query 3
+DROP INDEX idx_orders_quarter_custkey;
+DROP INDEX idx_customer_name;
+DROP INDEX idx_lineitem_returnflag_orderkey;

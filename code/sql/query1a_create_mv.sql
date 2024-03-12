@@ -1,6 +1,4 @@
--- SET :nation = '';
-
-EXPLAIN ANALYZE -- Add this at the beginning to get the execution plan 
+CREATE MATERIALIZED VIEW mv_query1 AS
 SELECT
     EXTRACT(YEAR FROM o.o_orderdate) AS year,
     EXTRACT(QUARTER FROM o.o_orderdate) AS quarter,
@@ -25,7 +23,7 @@ JOIN
     customer c ON o.o_custkey = c.c_custkey
 WHERE
     p.p_type = 'ECONOMY POLISHED TIN'
-    AND n.n_name = ':nation'
+    AND n.n_name = 'FRANCE'  
 GROUP BY ROLLUP(
     EXTRACT(YEAR FROM o.o_orderdate),
     EXTRACT(QUARTER FROM o.o_orderdate),
@@ -35,4 +33,3 @@ GROUP BY ROLLUP(
     r.r_name)
 ORDER BY
     year, quarter, month, part_type, exporting_nation_name, exporting_region_name;
-

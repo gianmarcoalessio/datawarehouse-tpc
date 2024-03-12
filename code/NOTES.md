@@ -1,114 +1,27 @@
-# DMBD Project
+### Hardware description
 
-See pdf for more information.
+Hardware was rented from the DigitalOcean Platform with these specs:
 
-## Setup 
+•⁠  ⁠vCPU (Virtual CPU): DO-Premium-Intel @ 4988.27 MHz (1 core, 1 thread)
+•⁠  ⁠RAM: 2 GB RAM
+•⁠  ⁠Storage: 70 GB Disk, NVMe SSD
+•⁠  ⁠GPU: Virtio GPU (virtualized)
+•⁠  ⁠OS: Ubuntu 22.04.4 LTS x86_64
 
-### (Optional) Linux configuration
+### Database performance (no optimization)
 
-Install the necessary packages
-```bash
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get -y install build-essential
-```
+Query 1 Execution time:
+- 1899.579 ms (query1_20240310_112704)
+- 2175.245 ms (query1_20240310_113004)
+- 1648.740 ms (query1_20240310_113007)
 
-### Postgres configuration
+Notes:
+- **Nested Loops and Hash Joins**: These can potentially be made more efficient through indexing.
+- **Unused Indexes**: The orders_pkey and customer_pkey were not used in this plan, which might indicate an indexing opportunity or the need to review the query.
 
-Install postgres for linux:
-```bash
-sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get update
-sudo apt-get -y install postgresql-15
-```
+Query 1 Indexed Execution time:
+- 1490.628 ms (query1_indexed_20240310_113417)
+- 1465.792 ms (query1_indexed_20240310_113420)
+- 1567.175 ms (query1_indexed_20240310_113423)
 
-Start the postgres service:
-```bash
-# START
-sudo systemctl start postgresql
-# STOP
-sudo systemctl stop postgresql
-```
-
-Connect locally to postgres and create an user
-```bash
-sudo su - postgres
-psql -U postgres -d postgres
-CREATE USER admin WITH PASSWORD 'admin' SUPERUSER;
-```
-
-Allow local connection (not secure, only for testing), in this file change `peer` to `md5`:
-```bash
-sudo nano /etc/postgresql/15/main/pg_hba.conf
-
-# Locate: local   all             postgres                                peer
-# Change to: local   all             postgres                                md5
-
-# Locate: local   all             all                                     peer
-# Change to: local   all             all                                     md5
-
-# Restart the service
-sudo systemctl restart postgresql
-```
-
-Now you can access with
-```bash
-psql -U admin -d postgres
-```
-### Sync files from host to guest
-```bash
-rsync -avz ./code/ bigdata:~/projectbigdata
-```
-
-### Database setup
-
-Follow the script to create the database and the tables, it will compile the dbgen and generate the data.
-
-Run the setup script
-```bash
-# chmod +x setup.sh
-./setup.sh
-```
-
-Check the database, password is `admin`
-```bash
-psql -U admin -d dmbd
-```
-
-## Queries
-
-### Setup query 1
-
-Select a Nation
-
-```sql
-SELECT n_name FROM nation;
-```
-
-Then see `project/sql/query1.sql`
-
-### Setup query 3
-
-Select a Customer and a Quarter
-```sql
-SELECT c_name FROM customer;
-SELECT EXTRACT(QUARTER FROM o_orderdate) FROM orders GROUP BY EXTRACT(QUARTER FROM o_orderdate);
-```
-
-Then see `project/sql/query3.sql`
-
-### Run the queries
-
-```bash
-# chmod +x run_queries.sh
-./run_queries.sh 'FRANCE' 'Customer#000000236' 1
-```
-
-### Get data from remote
-
-Get the result folder from the remote server
-```bash
-rsync -avz bigdata:~/projectbigdata/results/ ./code/results
-rsync -avz bigdata:~/projectbigdata/sqltest ./sqltest
-```
+Query 3 Execution time:

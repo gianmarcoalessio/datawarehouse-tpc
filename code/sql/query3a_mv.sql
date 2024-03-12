@@ -1,4 +1,4 @@
-EXPLAIN ANALYZE -- Add for execution plan analysis
+CREATE MATERIALIZED VIEW mv_query3 AS
 SELECT
     EXTRACT(YEAR FROM o.o_orderdate) AS year,
     EXTRACT(QUARTER FROM o.o_orderdate) AS quarter,
@@ -12,9 +12,9 @@ JOIN
 JOIN
     customer c ON o.o_custkey = c.c_custkey
 WHERE
-    l.l_returnflag = 'R' -- Assumendo che 'R' indichi gli articoli restituiti
-    AND c.c_name = ':customer' -- Sostituisci con il nome del cliente specifico
-    AND EXTRACT(QUARTER FROM o.o_orderdate) = :quarter -- Sostituisci SpecificQuarter con il numero del trimestre
+    l.l_returnflag = 'R' 
+    AND c.c_name = 'Customer#000000236' 
+    AND EXTRACT(QUARTER FROM o.o_orderdate) = 1 
 GROUP BY ROLLUP(
     EXTRACT(YEAR FROM o.o_orderdate),
     EXTRACT(QUARTER FROM o.o_orderdate),
@@ -22,4 +22,3 @@ GROUP BY ROLLUP(
     c.c_name)
 ORDER BY
     year, quarter, month, customer_name;
-

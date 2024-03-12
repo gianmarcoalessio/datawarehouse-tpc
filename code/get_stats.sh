@@ -3,41 +3,64 @@
 source utils.sh
 
 # Redirect all output to a file with timestamp in the name
-exec > "./results/stats_${timestamp}.txt" 2>&1
+exec >"./results/stats_${timestamp}.txt" 2>&1
 
 # Function to gather data statistics
 gather_statistics() {
-    table=$1  # Pass table name as an argument
+    OPTIND=1  # Reset OPTIND before each call to getopts
+    table=$1 # Pass table name as an argument
+    shift # Shift arguments to the left
 
     echo "*** Statistics for Table: ${table} ***"
 
-    # Number of rows
-    row_count=$(execute_query "SELECT COUNT(*) FROM ${table};")
-    echo "Number of rows: ${row_count}"
+    while getopts "rtic" opt; do
+        case ${opt} in
+            r)
+                # Number of rows
+                row_count=$(execute_query_t "SELECT COUNT(*) FROM ${table};")
+                echo "Number of rows: ${row_count}"
+                ;;
+            t)
+                # Table size
+                table_size=$(execute_query_t "SELECT pg_size_pretty(pg_total_relation_size('${table}'));")
+                echo "Table size: ${table_size}"
+                ;;
+            i)
+                # Index size
+                index_size=$(execute_query_t "SELECT pg_size_pretty(pg_indexes_size('${table}'));")
+                echo "Index size: ${index_size}"
+                ;;
+            c)
+                # Get columns for the table
+                COLUMNS=$(execute_query_t "SELECT column_name FROM information_schema.columns WHERE table_name = '${table}';")
 
-    # Table size
-    table_size=$(execute_query "SELECT pg_size_pretty(pg_total_relation_size('${table}'));")
-    echo "Table size: ${table_size}"
+                # Convert COLUMNS to an array
+                IFS=$'\n' read -rd '' -a COLUMNS <<<"$COLUMNS"
 
-    # Distinct values, minimum, and maximum for each query column
-    for column in "${COLUMNS[@]}"; do 
-        distinct_count=$(execute_query "SELECT COUNT(DISTINCT ${column}) FROM ${table};")
-        min_value=$(execute_query "SELECT MIN(${column}) FROM ${table};")
-        max_value=$(execute_query "SELECT MAX(${column}) FROM ${table};")
+                # Distinct values, minimum, and maximum for each query column
+                for column in "${COLUMNS[@]}"; do
+                    distinct_count=$(execute_query_t "SELECT COUNT(DISTINCT ${column}) FROM ${table};")
+                    min_value=$(execute_query_t "SELECT MIN(${column}) FROM ${table};")
+                    max_value=$(execute_query_t "SELECT MAX(${column}) FROM ${table};")
 
-        echo "Column: ${column}"
-        echo "  Distinct Values: ${distinct_count}"
-        echo "  Minimum: ${min_value}"
-        echo "  Maximum: ${max_value}"
+                    echo "Column: ${column}"
+                    echo "  Distinct Values: ${distinct_count}"
+                    echo "  Minimum: ${min_value}"
+                    echo "  Maximum: ${max_value}"
+                done
+                echo ""
+                ;;
+            \?)
+                echo "Invalid option: -$OPTARG" >&2
+                ;;
+        esac
     done
-    echo ""
 }
 
-# Specify the relevant tables 
+# Specify the relevant tables
 TABLES=("lineitem" "orders" "part" "supplier" "nation" "region" "customer")
-COLUMNS=("l_orderkey" "l_partkey" "l_suppkey" "p_type" "n_name" "o_orderdate") 
 
 # Gather statistics
 for table in "${TABLES[@]}"; do
-    gather_statistics "$table"
+    gather_statistics "$table" "$@"
 done

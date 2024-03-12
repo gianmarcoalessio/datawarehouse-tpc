@@ -14,6 +14,10 @@ execute_query() {
     psql -U $db_user -d $db_name -c "$1"
 }
 
+execute_query_t() {
+    psql -U $db_user -d $db_name -t -c "$1"
+}
+
 # Function to execute SQL queries from a file
 execute_query_file() {
     psql -U $db_user -d $db_name -f "$1"

@@ -4,10 +4,10 @@ SELECT
     l.l_discount, 
     l.l_returnflag,
     o.o_orderdate, 
-    p.p_type, 
+    p.p_type,
     s.s_nationkey, 
     c.c_custkey,
-    c.c_name, 
+    c.c_name,
     n.n_name AS exporting_nation_name,
     r.r_name AS exporting_region_name
 FROM 

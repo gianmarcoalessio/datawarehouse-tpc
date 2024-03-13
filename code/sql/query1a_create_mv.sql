@@ -6,7 +6,7 @@ SELECT
     p.p_type AS part_type,
     n.n_name AS exporting_nation_name,
     r.r_name AS exporting_region_name,
-    SUM(l.l_extendedprice * (1 - l.l_discount)) AS total_revenue
+    l.l_extendedprice * (1 - l.l_discount) AS total_revenue
 FROM
     lineitem l
 JOIN
@@ -23,13 +23,4 @@ JOIN
     customer c ON o.o_custkey = c.c_custkey
 WHERE
     p.p_type = 'ECONOMY POLISHED TIN'
-    AND n.n_name = 'FRANCE'  
-GROUP BY ROLLUP(
-    EXTRACT(YEAR FROM o.o_orderdate),
-    EXTRACT(QUARTER FROM o.o_orderdate),
-    EXTRACT(MONTH FROM o.o_orderdate),
-    p.p_type,
-    n.n_name,
-    r.r_name)
-ORDER BY
-    year, quarter, month, part_type, exporting_nation_name, exporting_region_name;
+    AND n.n_name = 'FRANCE';

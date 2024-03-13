@@ -10,15 +10,23 @@ db_password="admin"
 export PGPASSWORD=$db_password
 
 # Function to execute SQL queries
-execute_query() {
+execute_query_v() {
     psql -U $db_user -d $db_name -c "$1"
 }
 
-execute_query_t() {
+execute_query() {
     psql -U $db_user -d $db_name -t -c "$1"
 }
 
+execute_query_time() {
+    time psql -U $db_user -d $db_name -t -c "$1"
+}
+
 # Function to execute SQL queries from a file
+execute_query_file_time() {
+    time psql -U $db_user -d $db_name -f "$1" > /dev/null
+}
+
 execute_query_file() {
     psql -U $db_user -d $db_name -f "$1"
 }

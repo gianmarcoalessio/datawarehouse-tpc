@@ -25,3 +25,7 @@ Query 1 Indexed Execution time:
 - 1567.175 ms (query1_indexed_20240310_113423)
 
 Query 3 Execution time:
+
+
+# TODO
+repeat queries x25 and take mean and std

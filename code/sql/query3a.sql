@@ -1,4 +1,4 @@
-EXPLAIN ANALYZE -- Add for execution plan analysis
+-- EXPLAIN ANALYZE -- Add for execution plan analysis
 SELECT
     EXTRACT(YEAR FROM o.o_orderdate) AS year,
     EXTRACT(QUARTER FROM o.o_orderdate) AS quarter,

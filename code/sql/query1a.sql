@@ -1,6 +1,6 @@
 -- SET :nation = '';
 
-EXPLAIN ANALYZE -- Add this at the beginning to get the execution plan 
+--EXPLAIN ANALYZE
 SELECT
     EXTRACT(YEAR FROM o.o_orderdate) AS year,
     EXTRACT(QUARTER FROM o.o_orderdate) AS quarter,

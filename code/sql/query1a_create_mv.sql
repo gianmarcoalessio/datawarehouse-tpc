@@ -1,11 +1,13 @@
+-- 421 MB
+EXPLAIN ANALYZE
 CREATE MATERIALIZED VIEW mv_query1 AS
 SELECT
     EXTRACT(YEAR FROM o.o_orderdate) AS year,
     EXTRACT(QUARTER FROM o.o_orderdate) AS quarter,
     EXTRACT(MONTH FROM o.o_orderdate) AS month,
     p.p_type AS part_type,
-    n.n_name AS exporting_nation_name,
-    r.r_name AS exporting_region_name,
+    CONCAT(supplierNation.n_name, ', ', customerNation.n_name) AS CombinedNations, 
+    CONCAT(exportRegion.r_name, ', ', importRegion.r_name) AS CombinedRegions,
     l.l_extendedprice * (1 - l.l_discount) AS total_revenue
 FROM
     lineitem l
@@ -16,11 +18,14 @@ JOIN
 JOIN
     supplier s ON l.l_suppkey = s.s_suppkey
 JOIN
-    nation n ON s.s_nationkey = n.n_nationkey
-JOIN
-    region r ON n.n_regionkey = r.r_regionkey
-JOIN
     customer c ON o.o_custkey = c.c_custkey
+JOIN
+    nation supplierNation ON s.s_nationkey = supplierNation.n_nationkey
+JOIN
+    nation customerNation ON c.c_nationkey = customerNation.n_nationkey
+JOIN
+    region exportRegion ON supplierNation.n_regionkey = exportRegion.r_regionkey
+JOIN
+    region importRegion ON customerNation.n_regionkey = importRegion.r_regionkey
 WHERE
-    p.p_type = 'ECONOMY POLISHED TIN'
-    AND n.n_name = 'FRANCE';
+    supplierNation.n_name = 'FRANCE';

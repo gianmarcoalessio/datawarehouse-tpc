@@ -1,4 +1,4 @@
--- EXPLAIN ANALYZE
+EXPLAIN ANALYZE
 SELECT
     EXTRACT(YEAR FROM big_view.o_orderdate) AS year,
     EXTRACT(QUARTER FROM big_view.o_orderdate) AS quarter,
@@ -8,7 +8,7 @@ SELECT
 FROM
     big_view
 WHERE
-    big_view.l_returnflag = 'R' 
+    big_view.l_returnflag = 'R'
     AND big_view.c_name = 'Customer#000000236'
     AND EXTRACT(QUARTER FROM big_view.o_orderdate) = 1 
 GROUP BY ROLLUP(

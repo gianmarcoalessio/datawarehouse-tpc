@@ -1,2 +1,8 @@
-DROP TABLE IF EXISTS lineitem_returned;
-DROP TABLE IF EXISTS lineitem_not_returned;
+DROP TABLE IF EXISTS lineitem_1992;
+DROP TABLE IF EXISTS lineitem_1993;
+DROP TABLE IF EXISTS lineitem_1994;
+DROP TABLE IF EXISTS lineitem_1995;
+DROP TABLE IF EXISTS lineitem_1996;
+DROP TABLE IF EXISTS lineitem_1997;
+DROP TABLE IF EXISTS lineitem_1998;
+DROP TABLE IF EXISTS lineitem_partitioned;

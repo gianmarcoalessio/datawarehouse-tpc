@@ -1,25 +1,17 @@
--- EXPLAIN ANALYZE
+EXPLAIN ANALYZE
 SELECT 
-    year,
-    quarter,
-    month,
-    part_type,
-    exporting_nation_name,
-    exporting_region_name,
-    SUM(total_revenue) AS total_revenue
+    month AS OrderMonth, 
+    quarter AS OrderQuarter, 
+    year AS OrderYear,
+    CombinedNations, 
+    CombinedRegions,
+    part_type AS PartType,
+    SUM(total_revenue) AS TotalRevenue
 FROM 
     mv_query1
-GROUP BY ROLLUP(
-    year,
-    quarter,
-    month,
-    part_type,
-    exporting_nation_name,
-    exporting_region_name)
-ORDER BY 
-    year, 
-    quarter, 
-    month, 
-    part_type, 
-    exporting_nation_name, 
-    exporting_region_name;
+WHERE 
+    part_type = 'ECONOMY POLISHED TIN'
+GROUP BY 
+    ROLLUP(PartType), 
+    ROLLUP(CombinedNations, CombinedRegions),
+    ROLLUP(OrderYear, OrderQuarter, OrderMonth);

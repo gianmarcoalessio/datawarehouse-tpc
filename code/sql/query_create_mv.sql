@@ -1,3 +1,5 @@
+-- 8.66 GB
+EXPLAIN ANALYZE
 CREATE MATERIALIZED VIEW big_view AS
 SELECT 
     l.l_extendedprice, 
